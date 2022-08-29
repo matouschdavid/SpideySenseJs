@@ -1,0 +1,15 @@
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\bin\Debug\net6.0\SpideySense.exe
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\bin\Debug\net6.0\SpideySense.deps.json
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\bin\Debug\net6.0\SpideySense.runtimeconfig.json
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\bin\Debug\net6.0\SpideySense.dll
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\bin\Debug\net6.0\SpideySense.pdb
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\obj\Debug\net6.0\SpideySense.csproj.AssemblyReference.cache
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\obj\Debug\net6.0\SpideySense.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\obj\Debug\net6.0\SpideySense.AssemblyInfoInputs.cache
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\obj\Debug\net6.0\SpideySense.AssemblyInfo.cs
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\obj\Debug\net6.0\SpideySense.csproj.CoreCompileInputs.cache
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\obj\Debug\net6.0\SpideySense.dll
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\obj\Debug\net6.0\refint\SpideySense.dll
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\obj\Debug\net6.0\SpideySense.pdb
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\obj\Debug\net6.0\SpideySense.genruntimeconfig.cache
+C:\Projects\SpideySenseJs\SpideySense\SpideySense\obj\Debug\net6.0\ref\SpideySense.dll
