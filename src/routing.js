@@ -1,2 +1,7 @@
-module.exports.routes = [ ,{path: '/home', component: 'home'}
-];
+module.exports.routes = [, {
+    path: '/regions',
+    component: 'regions'
+}, {
+    path: '/restaurants',
+    component: 'restaurants'
+}];

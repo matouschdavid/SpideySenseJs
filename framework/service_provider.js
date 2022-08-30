@@ -10,12 +10,16 @@ module.exports = class ServiceProvider {
     this.activeObjects[classToInstantiate] = undefined;
   }
 
-  createInstance(classToInstantiate, queryParams) {
+  createInstance(classToInstantiate, params) {
     classToInstantiate = classToInstantiate.toLowerCase();
     if (this.activeObjects[classToInstantiate] === undefined) {
       this.activeObjects[classToInstantiate] =
-        this.backlog[classToInstantiate](queryParams);
+        this.backlog[classToInstantiate](params);
     }
     return this.activeObjects[classToInstantiate];
+  }
+
+  clear() {
+    this.activeObjects = [];
   }
 };

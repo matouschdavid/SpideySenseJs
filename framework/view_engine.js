@@ -13,21 +13,24 @@ module.exports.initEngine = function (app) {
     delete options.settings;
     const pageName = filePath.split("\\").at(-1).split(".page")[0];
     const obj = ServiceProvider.instance.createInstance(pageName, options);
-    const content = fs.readFileSync(filePath);
+    const content = fs.readFileSync(filePath, 'utf-8');
     const data = obj.data();
     const rendered = toHtml(content, data, pageName);
 
-    const indexContent = fs.readFileSync("./index.html");
+    const indexContent = fs.readFileSync("./index.html", 'utf-8');
     const indexRendered = toHtml(indexContent, data, rendered);
 
     callback(null, indexRendered);
   }
 
   function toHtml(content, pageData, routedPage) {
+    if (content.startsWith('@IGNORE@')) {
+      return content.replace('@IGNORE@', '');
+    }
     const result = content
       .toString()
       .replace(
-        /<\w+[^>]* \(click\)="(\w+\((\*?\w+\s*,?\s*)*\))"[^>]*>[^<]*<\/\w+>/g,
+        /<\w+[^>]* \(click\)="(\w+\((\*?[^<>]+\s*,?\s*)*\))"[^>]*>[^<]*<\/\w+>/g,
         function (replacer, p1) {
           const params = getDataBetween(p1, "(", ")");
           let paramsList = "";
@@ -39,7 +42,7 @@ module.exports.initEngine = function (app) {
               clientParams.push(element);
               startIndex = 1;
             } else {
-              value = pageData[element];
+              value = element.replaceAll("'", "").replaceAll('"', '');
               startIndex = 0;
             }
             paramsList += `<input hidden id="${element}" name="${element.substring(
@@ -60,9 +63,7 @@ module.exports.initEngine = function (app) {
                 document.getElementById('${p1.split("(")[0]}Form').submit();}"`
           );
           p1 = p1.split("(")[0];
-          const result = `  <form id="${p1}Form" action="/click" method="post">
-                                <input hidden name="page" value="${routedPage}" />
-                                <input hidden name="redirect" value="/${routedPage}" />
+          const result = `  <form id="${p1}Form" action="/${routedPage}" method="post">
                                 <input hidden name="onclick" value="${p1}" />
                                 <input hidden name="params" value="${params}" />
                                 ${paramsList}
@@ -78,7 +79,7 @@ module.exports.initEngine = function (app) {
           const array = p1.split(" in ")[1];
           let output = "";
           pageData[array].forEach((element) => {
-            processedTagData = tagData.replace(p1.split(" in ")[0], element);
+            processedTagData = tagData.replaceAll(`{{${p1.split(" in ")[0]}}}`, element).replaceAll(`{{ ${p1.split(" in ")[0]} }}`, element);
             output += processedTagData;
           });
           return output;
@@ -153,6 +154,6 @@ module.exports.initEngine = function (app) {
   }
 
   function getFileContents(component) {
-    return fs.readFileSync(`views/${component}/${component}.component`);
+    return fs.readFileSync(`views/${component}/${component}.component`, 'utf-8');
   }
 };

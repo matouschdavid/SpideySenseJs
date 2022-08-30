@@ -1,0 +1,8 @@
+<link rel="stylesheet" href="/views/regions/regions.css">
+<nav><a *for="region in regions" href="/restaurants/?region={{region}}">{{region}}</a></nav>
+
+<label for="region">New {{region}}</label>
+<input id="region" name="region" />
+<button id="newRegionBtn" (click)="addRegion(*region)">Add new region</button>
+
+<p id="paramsTest" (click)="testParams(3, 'Test', false, 2.3, *region, {{param}})">Paramstest</p>

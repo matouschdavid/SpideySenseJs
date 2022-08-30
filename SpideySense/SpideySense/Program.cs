@@ -21,13 +21,16 @@ if(type == "page")
 {
     Directory.CreateDirectory($"./views/{name}");
     var fs = File.CreateText($"./views/{name}/{name}.page");
-    fs.WriteLine("<!-- TODO ADD YOUR MARKUP HERE -->\n<p>{{title}} works</p>");
+    fs.WriteLine($"<link rel=\"stylesheet\" href=\"/views/{name}/{name}.css\">\n" + "<!-- TODO ADD YOUR MARKUP HERE -->\n<p>{{title}} works</p>");
+    fs.Close();
+
+    fs = File.CreateText($"./views/{name}/{name}.css");
     fs.Close();
 
     var nameWithUpper = char.ToUpper(name[0]) + name.Substring(1);
     fs = File.CreateText($"./views/{name}/{name}.js");
     fs.WriteLine($"module.exports = class {nameWithUpper} {{" +
-        "constructor(queryParams) { }" +
+        "constructor(params) { }" +
         "data() {" +
         "return {" +
         $"title: \"{nameWithUpper}\"" +
@@ -37,7 +40,7 @@ if(type == "page")
     fs.Close();
 
     var content = File.ReadAllText("./register.js");
-    content = $"const {nameWithUpper} = require(\"./views/{name}/{name}\"); \n{content.Substring(0, content.Length - CharacterCountToEnd(content))} sp.register(\"{name}\", function (queryParams) {{return new {nameWithUpper}(queryParams);}});\n}};";
+    content = $"const {nameWithUpper} = require(\"./views/{name}/{name}\"); \n{content.Substring(0, content.Length - CharacterCountToEnd(content))} sp.register(\"{name}\", function (params) {{return new {nameWithUpper}(params);}});\n}};";
     File.WriteAllText("./register.js", content);
 
     content = File.ReadAllText("./routing.js");

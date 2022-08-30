@@ -1,4 +1,0 @@
-<!-- TODO ADD YOUR MARKUP HERE -->
-<p>{{title}} works</p>
-<h1>{{currentNr}}</h1>
-<a href="/home?test=1">Link</a>
