@@ -1,0 +1,3 @@
+<link rel="stylesheet" href="/views/home/home.css">
+<!-- TODO ADD YOUR MARKUP HERE -->
+<p>{{title}} works</p>

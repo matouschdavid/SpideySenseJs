@@ -1,7 +1,7 @@
-module.exports.routes = [, {
-    path: '/regions',
-    component: 'regions'
+module.exports.routes = [{
+    path: '/',
+    component: 'home'
 }, {
-    path: '/restaurants',
-    component: 'restaurants'
+    path: '/home',
+    component: 'home'
 }];
