@@ -13,19 +13,22 @@ module.exports.initEngine = function (app) {
     delete options.settings;
     const pageName = filePath.split("\\").at(-1).split(".page")[0];
     const obj = ServiceProvider.createPage(pageName, options);
-    const content = fs.readFileSync(filePath, 'utf-8');
+    const content = fs.readFileSync(filePath, "utf-8");
     const data = obj.data();
-    const rendered = toHtml(content, data, pageName);
-
-    const indexContent = fs.readFileSync("./index.html", 'utf-8');
+    if (content.startsWith("@IGNORE@")) {
+      const rendered = toHtml(content, data, pageName);
+      callback(null, rendered);
+      return;
+    }
+    const indexContent = fs.readFileSync("./index.html", "utf-8");
     const indexRendered = toHtml(indexContent, data, rendered);
 
     callback(null, indexRendered);
   }
 
   function toHtml(content, pageData, routedPage) {
-    if (content.startsWith('@IGNORE@')) {
-      return content.replace('@IGNORE@', '');
+    if (content.startsWith("@IGNORE@")) {
+      return content.replace("@IGNORE@", "");
     }
     const result = content
       .toString()
@@ -42,7 +45,7 @@ module.exports.initEngine = function (app) {
               clientParams.push(element);
               startIndex = 1;
             } else {
-              value = element.replaceAll("'", "").replaceAll('"', '');
+              value = element.replaceAll("'", "").replaceAll('"', "");
               startIndex = 0;
             }
             paramsList += `<input hidden id="${element}" name="${element.substring(
@@ -80,17 +83,22 @@ module.exports.initEngine = function (app) {
           const loopVar = p1.split(" in ")[0];
           let output = "";
           pageData[array].forEach((element) => {
-            processedTagData = tagData.replace(/{{\s*([\w.]+)\s*}}/g, function (replacer, p1) {
-              if (p1.startsWith(loopVar)) {
-                let data = element;
-                p1.split('.').slice(1).forEach(field => {
-                  data = data[field];
-                })
-                if (data === undefined) data = p1;
-                return data;
+            processedTagData = tagData.replace(
+              /{{\s*([\w.]+)\s*}}/g,
+              function (replacer, p1) {
+                if (p1.startsWith(loopVar)) {
+                  let data = element;
+                  p1.split(".")
+                    .slice(1)
+                    .forEach((field) => {
+                      data = data[field];
+                    });
+                  if (data === undefined) data = p1;
+                  return data;
+                }
+                return replacer;
               }
-              return replacer;
-            })
+            );
             output += processedTagData;
           });
           return output;
@@ -106,9 +114,9 @@ module.exports.initEngine = function (app) {
       )
       .replace(/{{\s*([\w.]+)\s*}}/g, function (replacer, p1) {
         let data = pageData;
-        p1.split('.').forEach(field => {
+        p1.split(".").forEach((field) => {
           data = data[field];
-        })
+        });
         if (data === undefined) data = p1;
         return data;
       })
@@ -168,6 +176,9 @@ module.exports.initEngine = function (app) {
   }
 
   function getFileContents(component) {
-    return fs.readFileSync(`views/${component}/${component}.component`, 'utf-8');
+    return fs.readFileSync(
+      `views/${component}/${component}.component`,
+      "utf-8"
+    );
   }
 };

@@ -1,7 +1,10 @@
-module.exports.routes = [{
-    path: '/',
-    component: 'home'
-}, {
-    path: '/home',
-    component: 'home'
-}];
+module.exports.routes = [
+  {
+    path: "/",
+    redirect: "/home",
+  },
+  {
+    path: "/home",
+    component: "home",
+  },
+];

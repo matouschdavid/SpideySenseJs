@@ -40,12 +40,27 @@ if(type == "page")
     fs.Close();
 
     var content = File.ReadAllText("./register.js");
-    content = $"const {nameWithUpper} = require(\"./views/{name}/{name}\"); \n{content.Substring(0, content.Length - CharacterCountToEnd(content))} sp.register(\"{name}\", function (params) {{return new {nameWithUpper}(params);}});\n}};";
+    content = $"const {nameWithUpper} = require(\"./views/{name}/{name}\"); \n{content.Substring(0, content.Length - CharacterCountToEnd(content))} ServiceProvider.register(\"{name}\", (params) => {{return new {nameWithUpper}(params);}});\n}};";
     File.WriteAllText("./register.js", content);
 
     content = File.ReadAllText("./routing.js");
     content = $"{content.Substring(0, content.Length - CharacterCountToEnd(content))} ,{{path: '/{name}', component: '{name}'}}\n];";
     File.WriteAllText("./routing.js", content);
+    return;
+}
+
+if(type == "service")
+{
+    Directory.CreateDirectory($"./services/");
+    var fs = File.CreateText($"./services/{name}_service.js");
+    var nameWithUpper = char.ToUpper(name[0]) + name.Substring(1);
+
+    fs.WriteLine($"module.exports = class {nameWithUpper}Service {{}}");
+    fs.Close();
+
+    var content = File.ReadAllText("./register.js");
+    content = $"const {nameWithUpper}Service = require(\"./services/{name}_service\"); \n{content.Substring(0, content.Length - CharacterCountToEnd(content))} ServiceProvider.register(\"{name}Service\", () => {{return new {nameWithUpper}Service();}});\n}};";
+    File.WriteAllText("./register.js", content);
     return;
 }
 
