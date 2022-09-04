@@ -1,3 +1,9 @@
 <link rel="stylesheet" href="/views/home/home.css">
 <!-- TODO ADD YOUR MARKUP HERE -->
+<p *for="element in simpleArray">{{element}}</p>
+
 <p>{{title}} works</p>
+
+<p *for="region in regions">{{region.name}}</p>
+
+<p>{{objTest.name}}</p>

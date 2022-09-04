@@ -8,19 +8,26 @@ const {
 const ServiceProvider = require("./service_provider");
 
 const app = express();
+require("./view_engine").initEngine(app);
+if (routes.filter(route => route.path == "/").length == 1) {
+  app.get('/', (req, res, next) => {
+    res.redirect(routes.filter(route => route.path == "/")[0].path);
+  })
+}
 app.use(express.static('./'));
 
 app.use(express.urlencoded({
   extended: true
 }));
 
-require("./view_engine").initEngine(app);
 
 app.all(/[^}]+/, (req, res, next) => {
   // res.sendFile(path.join(__dirname, 'styles.css'));
-  ServiceProvider.instance.clear();
+  ServiceProvider.clear();
   next();
 })
+
+
 
 //configure all routes
 routes.forEach((route) => {
@@ -38,7 +45,7 @@ routes.forEach((route) => {
       params[index] = req.body[value];
     }
     const page = req.url.substring(1);
-    const pageObj = ServiceProvider.instance.createInstance(page, {
+    const pageObj = ServiceProvider.createPage(page, {
       ...req.query,
       ...req.body
     });

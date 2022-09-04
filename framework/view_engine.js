@@ -12,7 +12,7 @@ module.exports.initEngine = function (app) {
     delete options._locals;
     delete options.settings;
     const pageName = filePath.split("\\").at(-1).split(".page")[0];
-    const obj = ServiceProvider.instance.createInstance(pageName, options);
+    const obj = ServiceProvider.createPage(pageName, options);
     const content = fs.readFileSync(filePath, 'utf-8');
     const data = obj.data();
     const rendered = toHtml(content, data, pageName);
@@ -77,9 +77,20 @@ module.exports.initEngine = function (app) {
         function (replacer, p1) {
           const tagData = replacer.replace(` *for="${p1}"`, "");
           const array = p1.split(" in ")[1];
+          const loopVar = p1.split(" in ")[0];
           let output = "";
           pageData[array].forEach((element) => {
-            processedTagData = tagData.replaceAll(`{{${p1.split(" in ")[0]}}}`, element).replaceAll(`{{ ${p1.split(" in ")[0]} }}`, element);
+            processedTagData = tagData.replace(/{{\s*([\w.]+)\s*}}/g, function (replacer, p1) {
+              if (p1.startsWith(loopVar)) {
+                let data = element;
+                p1.split('.').slice(1).forEach(field => {
+                  data = data[field];
+                })
+                if (data === undefined) data = p1;
+                return data;
+              }
+              return replacer;
+            })
             output += processedTagData;
           });
           return output;
@@ -93,8 +104,11 @@ module.exports.initEngine = function (app) {
           return "";
         }
       )
-      .replace(/{{\s*(\w+)\s*}}/g, function (replacer, p1) {
-        let data = pageData[p1];
+      .replace(/{{\s*([\w.]+)\s*}}/g, function (replacer, p1) {
+        let data = pageData;
+        p1.split('.').forEach(field => {
+          data = data[field];
+        })
         if (data === undefined) data = p1;
         return data;
       })

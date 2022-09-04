@@ -1,16 +1,14 @@
 module.exports = class ServiceProvider {
-  static instance = new ServiceProvider();
 
-  constructor() {}
-
-  backlog = [];
-  activeObjects = [];
-  register(classToInstantiate, creationFunc) {
+  static backlog = [];
+  static activeObjects = [];
+  static register(classToInstantiate, creationFunc) {
+    classToInstantiate = classToInstantiate.toLowerCase();
     this.backlog[classToInstantiate] = creationFunc;
     this.activeObjects[classToInstantiate] = undefined;
   }
 
-  createInstance(classToInstantiate, params) {
+  static createPage(classToInstantiate, params) {
     classToInstantiate = classToInstantiate.toLowerCase();
     if (this.activeObjects[classToInstantiate] === undefined) {
       this.activeObjects[classToInstantiate] =
@@ -19,7 +17,16 @@ module.exports = class ServiceProvider {
     return this.activeObjects[classToInstantiate];
   }
 
-  clear() {
+  static create(classToInstantiate) {
+    classToInstantiate = classToInstantiate.toLowerCase();
+    if (this.activeObjects[classToInstantiate] === undefined) {
+      this.activeObjects[classToInstantiate] =
+        this.backlog[classToInstantiate]();
+    }
+    return this.activeObjects[classToInstantiate];
+  }
+
+  static clear() {
     this.activeObjects = [];
   }
 };

@@ -1,7 +1,12 @@
-const Home = require("./views/home/home"); 
+const Home = require("./views/home/home");
 const ServiceProvider = require("../framework/service_provider");
+const TestService = require("./services/testService");
 
 module.exports = function () {
-  const sp = ServiceProvider.instance;
- sp.register("home", function (params) {return new Home(params);});
+  ServiceProvider.register("home", function (params) {
+    return new Home(params);
+  });
+  ServiceProvider.register("testService", () => {
+    return new TestService();
+  })
 };
