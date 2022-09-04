@@ -160,7 +160,7 @@ constructor(params) {
    
  ## CLI Tool
  
- Zu Beginn hast du eine Umgebungsvariable für diese CLI Tool anlegen müssen, aber was kann dieses Tool?
+ Zu Beginn hast du eine Umgebungsvariable für das CLI Tool anlegen müssen, aber was kann dieses Tool?
  
  1. Projekt starten
     - spideysense start
