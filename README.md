@@ -65,6 +65,7 @@ data() {
 
 Wenn du in deiner .js Datei ein Array an Werten hast, kannst du über diese Elemente iterieren und html Elemente erzeugen lassen.
 ```js
+//calculator.js
 ...
 data() {
         return {
@@ -80,6 +81,7 @@ data() {
 
 ```
 ```html
+<!-- calculator.page -->
 ...
 <p *for="currentValue in myValues">{{currentValue}}</p>
 ...
@@ -88,6 +90,7 @@ Erzeugt werden 3 p Tags mit den Werten: hello, world und ! .
 
 Auch ifs können erstellt werden, um Elemente nur in bestimmten Fällen anzuzeigen.
 ```js
+//calculator.js
 ...
 data() {
         return {
@@ -99,6 +102,7 @@ data() {
 
 ```
 ```html
+<!-- calculator.page -->
 ...
 <p *if="shouldDisplay">Sometimes hidden</p>
 ...
@@ -108,6 +112,8 @@ Die Bedingung muss ein Feld in der data() Funktion sein.
 Abschließend kannst du jedem Element ein Click Event mitgeben, wie im normalen html auch.
 Der Unterschied ist jedoch, dass diese Funktion nun am Server ausgeführt wird. Also in deiner .js Datei und nicht am Client wie bisher.
 ```js
+
+//calculator.js
 ...
 addRegion(newRegion) {
         //Persist region in any way
@@ -115,6 +121,7 @@ addRegion(newRegion) {
 ...
 ```
 ```html
+<!-- calculator.page -->
 ...
 <button id="newRegionBtn" (click)="addRegion('Linz')">Add new region</button>
 ...
@@ -125,6 +132,7 @@ Mit (click) kannst du eine Funktion angeben, die am Server ausgeführt werden so
 
 Aktuell wird jedoch immer Linz hardgecoded übergeben. Um dies dynamisch zu gestalten, könntest du ein input Feld erzeugen und diesen Wert übergeben.
 ```html
+<!-- calculator.page -->
 ...
 <!-- normales input Feld -->
 <input id="newRegion" name="newRegion"/>
@@ -144,6 +152,7 @@ html der "alten" Seite:
 
 js der "neuen" Seite
 ```js
+//newsite.js
 constructor(params) {
         console.log(params.myvalue);
     }
