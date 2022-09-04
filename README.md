@@ -166,9 +166,9 @@ constructor(params) {
     - spideysense start
  2. Page erstellen
     - spideysense page myNewPage
- 3. Komponente erstellen
+ 3. Komponente erstellen (soon)
     - spideysense component myNewComponent
 
  Wenn du Änderungen hast, musst du den spideysense start Befehl mit Strg+C beenden und Neustarten. Wenn ein Fehler auftritt, wiederhole diese Schritte.
- Eine Komponente ist ein Teil einer Seite und kann mit <nameOfComponent-component></nameOfComponent-component> eingebunden werden. Diese Komponente kann auf die selben Daten wie die Seite zugreifen.
- Um dies einzuschränken kannst du <nameOfComponent-component data="mySmallerData"></nameOfComponent-component> einbinden. mySmallerData muss ein Javascript Objekt in der data Funktion sein.
+ Eine Komponente ist ein Teil einer Seite und kann mit \<nameOfComponent-component></nameOfComponent-component> eingebunden werden. Diese Komponente kann auf die selben Daten wie die Seite zugreifen.
+ Um dies einzuschränken kannst du \<nameOfComponent-component data="mySmallerData"></nameOfComponent-component> einbinden. mySmallerData muss ein Javascript Objekt in der data Funktion sein.
