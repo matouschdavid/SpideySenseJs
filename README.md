@@ -21,7 +21,12 @@ Anschließend müssen wir das SpideySense CLI Tool zum Pfad hinzufügen.
 
 ## Get Started
 
-Öffne den "/src" Ordner dieses Projekts in einem Editor deiner Wahl. Um dieses Projekt zu starten, musst du den folgenden Befehl eingeben:
+Öffne den "/src" Ordner dieses Projekts in einem Editor deiner Wahl.
+Als erstes musst du alle Abhängigkeiten die dieses Projekt benötigt herunterladen:
+```cmd
+npm install
+```
+Um dieses Projekt zu starten, musst du den folgenden Befehl eingeben:
 
 ```cmd
 spideysense start
