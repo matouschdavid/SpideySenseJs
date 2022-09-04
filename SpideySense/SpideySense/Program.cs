@@ -29,7 +29,8 @@ if(type == "page")
 
     var nameWithUpper = char.ToUpper(name[0]) + name.Substring(1);
     fs = File.CreateText($"./views/{name}/{name}.js");
-    fs.WriteLine($"module.exports = class {nameWithUpper} {{" +
+    fs.WriteLine("const ServiceProvider = require(\"../../../framework/service_provider\");" +
+        $"module.exports = class {nameWithUpper} {{" +
         "constructor(params) { }" +
         "data() {" +
         "return {" +
