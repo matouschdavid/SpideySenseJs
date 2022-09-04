@@ -15,10 +15,13 @@ module.exports.initEngine = function (app) {
     const obj = ServiceProvider.createPage(pageName, options);
     const content = fs.readFileSync(filePath, "utf-8");
     const data = obj.data();
+    let rendered = "";
     if (content.startsWith("@IGNORE@")) {
-      const rendered = toHtml(content, data, pageName);
+      rendered = toHtml(content, data, pageName);
       callback(null, rendered);
       return;
+    } else {
+      rendered = toHtml(content, data, pageName);
     }
     const indexContent = fs.readFileSync("./index.html", "utf-8");
     const indexRendered = toHtml(indexContent, data, rendered);
