@@ -83,7 +83,7 @@ data() {
 ```html
 <!-- calculator.page -->
 ...
-<p *for="currentValue in myValues">{{currentValue}}</p>
+<p *for="currentValue in myValues">{{currentValue}}</p *endFor>
 ...
 ```
 Erzeugt werden 3 p Tags mit den Werten: hello, world und ! .
