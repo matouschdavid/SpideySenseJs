@@ -12,8 +12,12 @@ if(type == "component")
 {
     Directory.CreateDirectory($"./views/{name}");
     var fs = File.CreateText($"./views/{name}/{name}.component");
-    fs.WriteLine("<!-- TODO ADD YOUR MARKUP HERE -->");
+    fs.WriteLine($"<link rel=\"stylesheet\" href=\"/views/{name}/{name}.css\">\n<link rel=\"stylesheet\" type=\"text/css\" href=\"../../styles.css\">\n" + "<!-- TODO ADD YOUR MARKUP HERE -->");
     fs.Close();
+    Console.WriteLine($"/views/{name}/{name}.component    ...    was created");
+    fs = File.CreateText($"./views/{name}/{name}.css");
+    fs.Close();
+    Console.WriteLine($"/views/{name}/{name}.css    ...    was created");
     return;
 }
 
@@ -21,32 +25,36 @@ if(type == "page")
 {
     Directory.CreateDirectory($"./views/{name}");
     var fs = File.CreateText($"./views/{name}/{name}.page");
-    fs.WriteLine($"<link rel=\"stylesheet\" href=\"/views/{name}/{name}.css\">\n" + "<!-- TODO ADD YOUR MARKUP HERE -->\n<p>{{title}} works</p>");
+    fs.WriteLine($"<link rel=\"stylesheet\" href=\"/views/{name}/{name}.css\">\n<link rel=\"stylesheet\" type=\"text/css\" href=\"../../styles.css\">\n" + "<!-- TODO ADD YOUR MARKUP HERE -->\n<p>{{title}} works</p>");
     fs.Close();
+    Console.WriteLine($"/views/{name}/{name}.page    ...    was created");
 
     fs = File.CreateText($"./views/{name}/{name}.css");
     fs.Close();
+    Console.WriteLine($"/views/{name}/{name}.css    ...    was created");
 
     var nameWithUpper = char.ToUpper(name[0]) + name.Substring(1);
     fs = File.CreateText($"./views/{name}/{name}.js");
-    fs.WriteLine("const ServiceProvider = require(\"../../../framework/service_provider\");" +
-        $"module.exports = class {nameWithUpper} {{" +
-        "constructor(params) { }" +
-        "data() {" +
-        "return {" +
-        $"title: \"{nameWithUpper}\"" +
-        "};" +
-        "}" +
-        "}; ");
+    fs.WriteLine("const ServiceProvider = require(\"../../../framework/service_provider\");\n" +
+        $"module.exports = class {nameWithUpper} {{\n" +
+        "constructor(params) { }\n" +
+        "data() {\n" +
+        "return {\n" +
+        $"title: \"{nameWithUpper}\"\n" +
+        "};\n" +
+        "}\n" +
+        "};");
     fs.Close();
+    Console.WriteLine($"/views/{name}/{name}.js    ...    was created");
 
     var content = File.ReadAllText("./register.js");
     content = $"const {nameWithUpper} = require(\"./views/{name}/{name}\"); \n{content.Substring(0, content.Length - CharacterCountToEnd(content))} ServiceProvider.register(\"{name}\", (params) => {{return new {nameWithUpper}(params);}});\n}};";
     File.WriteAllText("./register.js", content);
-
+    Console.WriteLine($"/views/{name}/{name}.js    ...    was registered");
     content = File.ReadAllText("./routing.js");
     content = $"{content.Substring(0, content.Length - CharacterCountToEnd(content))} ,{{path: '/{name}', component: '{name}'}}\n];";
     File.WriteAllText("./routing.js", content);
+    Console.WriteLine($"/views/{name}/{name}.js    ...    was added as a route /{name}");
     return;
 }
 
@@ -58,10 +66,12 @@ if(type == "service")
 
     fs.WriteLine($"module.exports = class {nameWithUpper}Service {{}}");
     fs.Close();
+    Console.WriteLine($"/services/{name}_service.js    ...    was created");
 
     var content = File.ReadAllText("./register.js");
     content = $"const {nameWithUpper}Service = require(\"./services/{name}_service\"); \n{content.Substring(0, content.Length - CharacterCountToEnd(content))} ServiceProvider.register(\"{name}Service\", () => {{return new {nameWithUpper}Service();}});\n}};";
     File.WriteAllText("./register.js", content);
+    Console.WriteLine($"/services/{name}_service.js    ...    was registered");
     return;
 }
 
