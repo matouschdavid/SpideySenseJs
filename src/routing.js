@@ -7,4 +7,5 @@ module.exports.routes = [
     path: "/home",
     component: "home",
   },
+ ,{path: '/component', component: 'component'}
 ];

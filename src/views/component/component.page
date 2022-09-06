@@ -1,0 +1,3 @@
+<p>{{title}} works</p>
+<test-component></test-component>
+<p>{{title}}</p>

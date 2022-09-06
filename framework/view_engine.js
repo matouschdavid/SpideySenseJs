@@ -6,6 +6,7 @@ module.exports.initEngine = function (app) {
 
   app.set("views", "./views"); // specify the views directory
   app.set("view engine", "page"); // register the template engine
+  var indexRendered = "";
 
   function render(filePath, options, callback) {
     delete options.cache;
@@ -17,19 +18,43 @@ module.exports.initEngine = function (app) {
     const data = obj.data();
     let rendered = "";
     if (content.startsWith("@IGNORE@")) {
-      rendered = toHtml(content, data, pageName);
+      rendered = toHtml(content, data, pageName, 'shadowrouting');
       callback(null, rendered);
       return;
     } else {
-      rendered = toHtml(content, data, pageName);
+      rendered = toHtml(content, data, pageName, 'shadowrouting');
     }
     const indexContent = fs.readFileSync("./index.html", "utf-8");
-    const indexRendered = toHtml(indexContent, data, rendered);
-
+    indexRendered = toHtml(indexContent, data, rendered, 'document');
+    // console.log(indexRendered);
+    scriptContents = combineScripts(indexRendered);
+    scriptContents = scriptContents.replaceAll('<script>', '`').replaceAll('</script>`;', '');
+    indexRendered += `<script>${scriptContents}</script>`;
+    console.log("Contents: \n");
+    console.log(indexRendered);
     callback(null, indexRendered);
   }
 
-  function toHtml(content, pageData, routedPage) {
+  function combineScripts(content) {
+    let scriptContents = content;
+    indexRendered = content.replace(/<script>([^]+)<\/script>/g, (replacer, p1) => {
+      console.log("found p1: " + p1);
+      const innerScript = combineScripts(p1);
+      console.log("found innerScript: " + innerScript);
+      console.log("has p1: " + p1);
+      if (p1 != innerScript) {
+        scriptContents = p1.replaceAll(innerScript, "");
+        console.log("now scriptContents of: " + scriptContents);
+      } else {
+        scriptContents = p1;
+      }
+      return "";
+    });
+    console.log("return scriptcontents: " + scriptContents);
+    return scriptContents;
+  }
+
+  function toHtml(content, pageData, routedPage, root) {
     if (content.startsWith("@IGNORE@")) {
       return content.replace("@IGNORE@", "");
     }
@@ -127,7 +152,8 @@ module.exports.initEngine = function (app) {
         return includeComponent(
           getComponentName(replacer),
           pageData,
-          routedPage
+          routedPage,
+          root
         );
       })
       .replace(
@@ -136,17 +162,18 @@ module.exports.initEngine = function (app) {
           return includeComponent(
             getComponentName(replacer),
             pageData[p1],
-            routedPage
+            routedPage,
+            root
           );
         }
       );
     return result;
   }
 
-  function includeComponent(newComponent, data, routedPage) {
+  function includeComponent(newComponent, data, routedPage, root) {
     let content = routedPage;
     if (newComponent != "routing") {
-      content = toHtml(getFileContents(newComponent), data);
+      content = toHtml(getFileContents(newComponent), data, '', `shadow${newComponent}`);
     }
     let onClickEvents = "";
     content.replace(
@@ -163,7 +190,7 @@ module.exports.initEngine = function (app) {
     );
     content = content.replace(/onclick="{([^}]+)}"/g, "");
     const result = `<div id="${newComponent}"></div><script>
-    let shadow${newComponent} = document.querySelector('#${newComponent}').attachShadow({ mode: "open" });
+    let shadow${newComponent} = ${root}.querySelector('#${newComponent}').attachShadow({ mode: "open" });
     shadow${newComponent}.innerHTML = \`${content}\`;
     ${onClickEvents}
 </script>`;
