@@ -6,11 +6,12 @@ module.exports.initEngine = function (app) {
 
   app.set("views", "./views"); // specify the views directory
   app.set("view engine", "page"); // register the template engine
-
+  let scriptLines = [];
   async function render(filePath, options, callback) {
     delete options.cache;
     delete options._locals;
     delete options.settings;
+    scriptLines = [];
     const pageName = filePath.split("\\").at(-1).split(".page")[0];
     const obj = ServiceProvider.createPage(pageName, options);
     const content = fs.readFileSync(filePath, "utf-8");
@@ -24,8 +25,8 @@ module.exports.initEngine = function (app) {
       rendered = toHtml(content, data, pageName);
     }
     const indexContent = fs.readFileSync("./index.html", "utf-8");
-    const indexRendered = toHtml(indexContent, data, rendered);
-
+    let indexRendered = toHtml(indexContent, data, rendered);
+    indexRendered += `<script>${scriptLines.join('\n')}</script>`;
     callback(null, indexRendered);
   }
 
@@ -33,51 +34,9 @@ module.exports.initEngine = function (app) {
     if (content.startsWith("@IGNORE@")) {
       return content.replace("@IGNORE@", "");
     }
+    formIds = [];
     const result = content
       .toString()
-      .replace(
-        /<\w+[^>]* \(click\)="(\w+\((\*?[^<>]+\s*,?\s*)*\))"[^>]*>[^<]*<\/\w+>/g,
-        function (replacer, p1) {
-          const params = getDataBetween(p1, "(", ")");
-          let paramsList = "";
-          let clientParams = [];
-          params.split(",").forEach((element) => {
-            let value = "";
-            if (element.startsWith("*")) {
-              value = `tbd`;
-              clientParams.push(element);
-              startIndex = 1;
-            } else {
-              value = element.replaceAll("'", "").replaceAll('"', "");
-              startIndex = 0;
-            }
-            paramsList += `<input hidden id="${element}" name="${element.substring(
-              startIndex
-            )}" value="${value}" />`;
-          });
-          let clientParamsText = "";
-          clientParams.forEach((param) => {
-            clientParamsText += `document.getElementById('${param}').value = document.getElementById('${param.substring(
-              1
-            )}').value;`;
-          });
-
-          const tagData = replacer.replace(
-            `\(click\)="${p1}"`,
-            `onclick="{
-                ${clientParamsText}
-                document.getElementById('${p1.split("(")[0]}Form').submit();}"`
-          );
-          p1 = p1.split("(")[0];
-          const result = `  <form id="${p1}Form" action="/${routedPage}" method="post">
-                                <input hidden name="onclick" value="${p1}" />
-                                <input hidden name="params" value="${params}" />
-                                ${paramsList}
-                                ${tagData}
-                            </form>`;
-          return result;
-        }
-      )
       .replace(
         /<\w+[^>]* \*for="(\w+ in \w+)"[^]*>[^]+<\/\w+ \*endFor>/g,
         function (replacer, p1) {
@@ -105,6 +64,51 @@ module.exports.initEngine = function (app) {
             output += processedTagData;
           });
           return output;
+        }
+      )
+      .replace(
+        /<\w+[^>]* \(click\)="(\w+\((\*?[^<>]+\s*,?\s*)*\))"[^>]*>[^<]*<\/\w+>/g,
+        function (replacer, p1) {
+          const params = getDataBetween(p1, "(", ")");
+          let paramsList = "";
+          let clientParams = [];
+          params.split(",").forEach((element) => {
+            let value = "";
+            if (element.startsWith("*")) {
+              value = `tbd`;
+              clientParams.push(element);
+              startIndex = 1;
+            } else {
+              value = element.replaceAll("'", "").replaceAll('"', "");
+              startIndex = 0;
+            }
+            paramsList += `<input hidden id="${element}" name="${element.substring(
+              startIndex
+            )}" value="${value}" />`;
+          });
+          let clientParamsText = "";
+          clientParams.forEach((param) => {
+            clientParamsText += `document.getElementById('${param}').value = document.getElementById('${param.substring(
+              1
+            )}').value;`;
+          });
+          formIds.push(p1.split('(')[0]);
+          const nr = formIds.filter(x => x == p1.split('(')[0]).length;
+          const tagData = replacer.replace(
+            `\(click\)="${p1}"`,
+            `onclick="{
+                ${clientParamsText}
+                document.getElementById('${p1.split("(")[0]}Form${nr}').submit();}"`
+          );
+          p1 = p1.split("(")[0];
+
+          const result = `  <form id="${p1}Form${nr}" action="/${routedPage}" method="post">
+                                <input hidden name="onclick" value="${p1}" />
+                                <input hidden name="params" value="${params}" />
+                                ${paramsList}
+                                ${tagData}
+                            </form>`;
+          return result;
         }
       )
       .replace(
@@ -162,11 +166,10 @@ module.exports.initEngine = function (app) {
       }
     );
     content = content.replace(/onclick="{([^}]+)}"/g, "");
-    const result = `<div id="${newComponent}"></div><script>
-    let shadow${newComponent} = document.querySelector('#${newComponent}').attachShadow({ mode: "open" });
-    shadow${newComponent}.innerHTML = \`${content}\`;
-    ${onClickEvents}
-</script>`;
+    const result = `<div id="${newComponent}"></div>`;
+    scriptLines.push(`let shadow${newComponent} = document.querySelector('#${newComponent}').attachShadow({ mode: "open" });
+shadow${newComponent}.innerHTML = \`${content}\`;
+${onClickEvents}`);
     return result;
   }
 
