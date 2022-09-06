@@ -7,14 +7,14 @@ module.exports.initEngine = function (app) {
   app.set("views", "./views"); // specify the views directory
   app.set("view engine", "page"); // register the template engine
 
-  function render(filePath, options, callback) {
+  async function render(filePath, options, callback) {
     delete options.cache;
     delete options._locals;
     delete options.settings;
     const pageName = filePath.split("\\").at(-1).split(".page")[0];
     const obj = ServiceProvider.createPage(pageName, options);
     const content = fs.readFileSync(filePath, "utf-8");
-    const data = obj.data();
+    const data = await obj.data();
     let rendered = "";
     if (content.startsWith("@IGNORE@")) {
       rendered = toHtml(content, data, pageName);
