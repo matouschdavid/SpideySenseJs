@@ -1,0 +1,12 @@
+<link rel="stylesheet" href="/views/restaurants/restaurants.css">
+<!-- TODO ADD YOUR MARKUP HERE -->
+<h1>{{title}}</h1>
+
+<ul>
+    <li *for="restaurant in restaurants">
+        <div class="restaurant-card">
+            <h1>{{restaurant.name}}</h1>
+            <p>{{restaurant.rating}}</p>
+        </div>
+    </li *endFor>
+</ul>

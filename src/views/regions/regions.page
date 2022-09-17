@@ -1,0 +1,5 @@
+<link rel="stylesheet" href="/views/restaurants/restaurants.css">
+<link rel="stylesheet" type="text/css" href="../../styles.css">
+<ul>
+    <li *for="region in regions"><a href="/restaurants?regionId={{region.id}}">{{region.name}}</a></li *endFor>
+</ul>

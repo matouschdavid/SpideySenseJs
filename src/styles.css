@@ -1,3 +1,20 @@
 :root {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
+
+li {
+    background-color: white;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    padding: 16px;
+    margin: 16px;
+    box-sizing: border-box;
+    font-size: 32px;
+
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+ul {
+    padding: 0;
+}
