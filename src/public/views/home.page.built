@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+    <link rel="stylesheet" type="text/css" href="../../styles.css">
+</head>
+
+<body>
+    <link rel="stylesheet" href="./public/stylings/home.css"><link rel="stylesheet" href="./public/stylings/header.css"><h1 class="header_title">Header</h1>
+<input class="home_testInput" id="testInput" />
+  <form id="testForm1" action="/home" method="post">
+                                <input hidden name="onclick" value="test" />
+                                <input hidden name="params" value="3, 'other', *testInput, {{title}}" />
+                                <input hidden id="3" name="3" value="3" />
+<input hidden id="'other'" name="'other'" value="other" />
+<input hidden id="*testInput" name="testInput" value="tbd" />
+<input hidden id="{{title}}" name="{{title}}" value="{{title}}" />
+
+                                <h1 class="home_title" onclick="{
+                document.getElementById('*testInput').value = document.getElementById('testInput').value;
+                document.getElementById('testForm1').submit();}">other</h1>
+                            </form>
+<p class="home_first home_second home_third">hehe</p>
+
+<p *for="region in regions">{{region.name}}</p *endFor>
+<p *if="shouldDisplay">Sneaky</p>
+<script>
+    console.log('Here');
+</script>
+</body>
+
+</html>

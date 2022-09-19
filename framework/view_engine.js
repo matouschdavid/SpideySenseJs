@@ -2,32 +2,93 @@ const ServiceProvider = require("./service_provider");
 
 module.exports.initEngine = function (app) {
   const fs = require("fs"); // this engine requires the fs module
-  app.engine("page", render);
+  app.engine("page.built", render);
 
-  app.set("views", "./views"); // specify the views directory
-  app.set("view engine", "page"); // register the template engine
+  app.set("views", "./public/views"); // specify the views directory
+  app.set("view engine", "page.built"); // register the template engine
   let scriptLines = [];
   async function render(filePath, options, callback) {
+    options = cleanUpParams(options);
+    const pageName = getPageName(filePath);
+    const pageObj = await createPageObject(pageName, options);
+    let pageHtml = fs.readFileSync(filePath, "utf-8");
+    pageHtml = processPage(pageHtml, pageObj);
+    callback(null, pageHtml);
+  }
+
+  function cleanUpParams(options) {
     delete options.cache;
     delete options._locals;
     delete options.settings;
-    scriptLines = [];
-    const pageName = filePath.split("\\").at(-1).split(".page")[0];
-    const obj = ServiceProvider.createPage(pageName, options);
-    const content = fs.readFileSync(filePath, "utf-8");
+    return options;
+  }
+
+  function getPageName(filePath) {
+    return filePath.split("\\").at(-1).split(".page")[0];
+  }
+
+  async function createPageObject(pageName, params) {
+    const obj = ServiceProvider.createPage(pageName, params);
     const data = await obj.data();
-    let rendered = "";
-    if (content.startsWith("@IGNORE@")) {
-      rendered = toHtml(content, data, pageName);
-      callback(null, rendered);
-      return;
-    } else {
-      rendered = toHtml(content, data, pageName);
-    }
-    const indexContent = fs.readFileSync("./index.html", "utf-8");
-    let indexRendered = toHtml(indexContent, data, rendered);
-    indexRendered += `<script>${scriptLines.join('\n')}</script>`;
-    callback(null, indexRendered);
+    return {
+      object: obj,
+      data: data
+    };
+  }
+
+  function processPage(html, pageObj) {
+    html = addForsAndIfs(html, pageObj.data);
+    return fillInVariableValues(html, pageObj.data);
+  }
+
+  function fillInVariableValues(html, data) {
+    return html.replace(/{{\s*([\w.]+)\s*}}/g, function (_replacer, p1) {
+      let currentData = data;
+      p1.split(".").forEach((field) => {
+        currentData = currentData[field];
+      });
+      if (currentData === undefined) currentData = p1;
+      return currentData;
+    });
+  }
+
+  function addForsAndIfs(html, data) {
+    return html.replace(
+      /<\w+[^>]* \*for="(\w+ in \w+)"[^]*>[^]+<\/\w+ \*endFor>/g,
+      (replacer, p1) => {
+        const tagData = replacer.replace(` *for="${p1}"`, "");
+        const array = p1.split(" in ")[1];
+        const loopVar = p1.split(" in ")[0];
+        let output = "";
+        data[array].forEach((element) => {
+          processedTagData = tagData.replace(
+            /{{\s*([\w.]+)\s*}}/g,
+            function (replacer, p1) {
+              if (p1.startsWith(loopVar)) {
+                let currentData = element;
+                p1.split(".")
+                  .slice(1)
+                  .forEach((field) => {
+                    currentData = currentData[field];
+                  });
+                if (currentData === undefined) currentData = p1;
+                return currentData;
+              }
+              return replacer;
+            }
+          );
+          output += processedTagData;
+        });
+        return output;
+      }
+    ).replace(
+      /<\w+[^>]* \*if="(\w+)"[^>]*>[^<]*<\/\w+>/g,
+      function (replacer, p1) {
+        const tagData = replacer.replace(` *if="${p1}"`, "");
+        if (data[p1]) return tagData;
+        return "";
+      }
+    )
   }
 
   function toHtml(content, pageData, routedPage) {
@@ -66,51 +127,7 @@ module.exports.initEngine = function (app) {
           return output;
         }
       )
-      .replace(
-        /<\w+[^>]* \(click\)="(\w+\((\*?[^<>]+\s*,?\s*)*\))"[^>]*>[^<]*<\/\w+>/g,
-        function (replacer, p1) {
-          const params = getDataBetween(p1, "(", ")");
-          let paramsList = "";
-          let clientParams = [];
-          params.split(",").forEach((element) => {
-            let value = "";
-            if (element.startsWith("*")) {
-              value = `tbd`;
-              clientParams.push(element);
-              startIndex = 1;
-            } else {
-              value = element.replaceAll("'", "").replaceAll('"', "");
-              startIndex = 0;
-            }
-            paramsList += `<input hidden id="${element}" name="${element.substring(
-              startIndex
-            )}" value="${value}" />`;
-          });
-          let clientParamsText = "";
-          clientParams.forEach((param) => {
-            clientParamsText += `document.getElementById('${param}').value = document.getElementById('${param.substring(
-              1
-            )}').value;`;
-          });
-          formIds.push(p1.split('(')[0]);
-          const nr = formIds.filter(x => x == p1.split('(')[0]).length;
-          const tagData = replacer.replace(
-            `\(click\)="${p1}"`,
-            `onclick="{
-                ${clientParamsText}
-                document.getElementById('${p1.split("(")[0]}Form${nr}').submit();}"`
-          );
-          p1 = p1.split("(")[0];
 
-          const result = `  <form id="${p1}Form${nr}" action="/${routedPage}" method="post">
-                                <input hidden name="onclick" value="${p1}" />
-                                <input hidden name="params" value="${params}" />
-                                ${paramsList}
-                                ${tagData}
-                            </form>`;
-          return result;
-        }
-      )
       .replace(
         /<\w+[^>]* \*if="(\w+)"[^>]*>[^<]*<\/\w+>/g,
         function (replacer, p1) {
@@ -119,14 +136,7 @@ module.exports.initEngine = function (app) {
           return "";
         }
       )
-      .replace(/{{\s*([\w.]+)\s*}}/g, function (replacer, p1) {
-        let data = pageData;
-        p1.split(".").forEach((field) => {
-          data = data[field];
-        });
-        if (data === undefined) data = p1;
-        return data;
-      })
+
       .replace(/<\w+-component><\/\w+-component>/g, function (replacer) {
         return includeComponent(
           getComponentName(replacer),
