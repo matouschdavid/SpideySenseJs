@@ -1,7 +1,1 @@
-<header-component></header-component>
-<input class="testInput" id="testInput" />
-<h1 class="title" (click)="test(3, 'other', *testInput, {{title}})">other</h1>
-<p class="first second third">hehe</p>
-
-<p *for="region in regions">{{region.name}}</p *endFor>
-<p *if="shouldDisplay">Sneaky</p>
+<h1>Hello Spideysense</h1>
