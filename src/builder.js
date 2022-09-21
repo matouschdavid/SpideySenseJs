@@ -25,16 +25,23 @@ function includeComponent(html, componentName, componentHtml) {
 }
 
 function addCssPrefixes(html, cssName) {
-    html = html.replace(/class="([\w+ ]+)"/g, (_replacer, classes) => {
-        return `class="${classes.split(' ').map(c => `${cssName}_${c}`).join(' ')}"`;
+    html = html.replace(/class="([*\w\s-_]*)"/g, (_replacer, classes) => {
+        return `class="${classes.split(' ').map(c => c.replaceAll(' ', '')).map(c => addPrefix(cssName, c)).join(' ')}"`;
     });
 
-    const prefixedCssContent = fs.readFileSync(`./views/${cssName}/${cssName}.css`, 'utf-8').replace(/\.(\w+)/g, (_replacer, className) => {
-        return `.${cssName}_${className}`;
+    const prefixedCssContent = fs.readFileSync(`./views/${cssName}/${cssName}.css`, 'utf-8').replace(/\.([\w-_>\["'\]]*)\s*{/g, (_replacer, className) => {
+        return `.${cssName}_${className} {`;
     });
     fs.writeFileSync(`${publicPath}/stylings/${cssName}.css`, prefixedCssContent);
 
     return html;
+}
+
+function addPrefix(cssName, c) {
+    if (c.startsWith('*')) {
+        return `global_${c.substring(1)}`;
+    }
+    return `${cssName}_${c}`;
 }
 
 function processPage(html, routedPage) {
