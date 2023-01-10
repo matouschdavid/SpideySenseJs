@@ -1,6 +1,4 @@
 require("../src/register")();
-const http = require("http");
-const path = require("path");
 const express = require("express");
 const { routes } = require("../src/routing");
 const ServiceProvider = require("./service_provider");
@@ -21,7 +19,6 @@ app.use(
 );
 
 app.all(/[^}]+/, (req, res, next) => {
-  // res.sendFile(path.join(__dirname, 'styles.css'));
   ServiceProvider.clearScoped();
   next();
 });
@@ -29,7 +26,7 @@ app.all(/[^}]+/, (req, res, next) => {
 //configure all routes
 routes.forEach((route) => {
   app.get(route.path, function (req, res) {
-    res.render(`${route.component}/${route.component}`, {
+    res.render(route.component, {
       ...req.query,
       ...req.body,
     });
@@ -37,7 +34,7 @@ routes.forEach((route) => {
   app.post(route.path, (req, res) => {
     const params = req.body.params.split(",");
     for (let index = 0; index < params.length; index++) {
-      let value = params[index];
+      let value = params[index].replaceAll(" ", "");
       if (value.startsWith("*")) value = value.substring(1);
       params[index] = req.body[value];
     }
