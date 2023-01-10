@@ -1,0 +1,9 @@
+<link rel="stylesheet" href="/views/flo/flo.css">
+<!-- TODO ADD YOUR MARKUP HERE -->
+<p>{{title}} works</p>
+
+<h3 *for="i in numbers">{{i}}</h3>
+<input id="cityInput" type="text" />
+<button id="newRegionBtn" (click)="addRegion(*cityInput)">Add new region</button>
+
+<a href="/flo/?myvalue=hallo">Click me</a>
