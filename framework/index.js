@@ -22,7 +22,7 @@ app.use(
 
 app.all(/[^}]+/, (req, res, next) => {
   // res.sendFile(path.join(__dirname, 'styles.css'));
-  ServiceProvider.clear();
+  ServiceProvider.clearScoped();
   next();
 });
 
