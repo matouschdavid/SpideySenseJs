@@ -7,5 +7,7 @@ module.exports.routes = [
     path: "/home",
     component: "home",
   },
- ,{path: '/flo', component: 'flo'}
+  ,
+  { path: "/flo", component: "flo" },
+  { path: "/cool", component: "cool" },
 ];

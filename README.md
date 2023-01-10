@@ -21,7 +21,12 @@ Anschließend müssen wir das SpideySense CLI Tool zum Pfad hinzufügen.
 
 ## Get Started
 
-Öffne den "/src" Ordner dieses Projekts in einem Editor deiner Wahl. Um dieses Projekt zu starten, musst du den folgenden Befehl eingeben:
+Öffne den "/src" Ordner dieses Projekts in einem Editor deiner Wahl.
+Als erstes musst du alle Abhängigkeiten die dieses Projekt benötigt herunterladen:
+```cmd
+npm install
+```
+Um dieses Projekt zu starten, musst du den folgenden Befehl eingeben:
 
 ```cmd
 spideysense start
@@ -60,6 +65,7 @@ data() {
 
 Wenn du in deiner .js Datei ein Array an Werten hast, kannst du über diese Elemente iterieren und html Elemente erzeugen lassen.
 ```js
+//calculator.js
 ...
 data() {
         return {
@@ -75,14 +81,16 @@ data() {
 
 ```
 ```html
+<!-- calculator.page -->
 ...
-<p *for="currentValue in myValues">{{currentValue}}</p>
+<p *for="currentValue in myValues">{{currentValue}}</p *endFor>
 ...
 ```
 Erzeugt werden 3 p Tags mit den Werten: hello, world und ! .
 
 Auch ifs können erstellt werden, um Elemente nur in bestimmten Fällen anzuzeigen.
 ```js
+//calculator.js
 ...
 data() {
         return {
@@ -94,6 +102,7 @@ data() {
 
 ```
 ```html
+<!-- calculator.page -->
 ...
 <p *if="shouldDisplay">Sometimes hidden</p>
 ...
@@ -103,6 +112,8 @@ Die Bedingung muss ein Feld in der data() Funktion sein.
 Abschließend kannst du jedem Element ein Click Event mitgeben, wie im normalen html auch.
 Der Unterschied ist jedoch, dass diese Funktion nun am Server ausgeführt wird. Also in deiner .js Datei und nicht am Client wie bisher.
 ```js
+
+//calculator.js
 ...
 addRegion(newRegion) {
         //Persist region in any way
@@ -110,6 +121,7 @@ addRegion(newRegion) {
 ...
 ```
 ```html
+<!-- calculator.page -->
 ...
 <button id="newRegionBtn" (click)="addRegion('Linz')">Add new region</button>
 ...
@@ -120,6 +132,7 @@ Mit (click) kannst du eine Funktion angeben, die am Server ausgeführt werden so
 
 Aktuell wird jedoch immer Linz hardgecoded übergeben. Um dies dynamisch zu gestalten, könntest du ein input Feld erzeugen und diesen Wert übergeben.
 ```html
+<!-- calculator.page -->
 ...
 <!-- normales input Feld -->
 <input id="newRegion" name="newRegion"/>
@@ -139,6 +152,7 @@ html der "alten" Seite:
 
 js der "neuen" Seite
 ```js
+//newsite.js
 constructor(params) {
         console.log(params.myvalue);
     }
@@ -146,15 +160,15 @@ constructor(params) {
    
  ## CLI Tool
  
- Zu Beginn hast du eine Umgebungsvariable für diese CLI Tool anlegen müssen, aber was kann dieses Tool?
+ Zu Beginn hast du eine Umgebungsvariable für das CLI Tool anlegen müssen, aber was kann dieses Tool?
  
  1. Projekt starten
     - spideysense start
  2. Page erstellen
     - spideysense page myNewPage
- 3. Komponente erstellen
+ 3. Komponente erstellen (soon)
     - spideysense component myNewComponent
 
  Wenn du Änderungen hast, musst du den spideysense start Befehl mit Strg+C beenden und Neustarten. Wenn ein Fehler auftritt, wiederhole diese Schritte.
- Eine Komponente ist ein Teil einer Seite und kann mit <nameOfComponent-component></nameOfComponent-component> eingebunden werden. Diese Komponente kann auf die selben Daten wie die Seite zugreifen.
- Um dies einzuschränken kannst du <nameOfComponent-component data="mySmallerData"></nameOfComponent-component> einbinden. mySmallerData muss ein Javascript Objekt in der data Funktion sein.
+ Eine Komponente ist ein Teil einer Seite und kann mit \<nameOfComponent-component></nameOfComponent-component> eingebunden werden. Diese Komponente kann auf die selben Daten wie die Seite zugreifen.
+ Um dies einzuschränken kannst du \<nameOfComponent-component data="mySmallerData"></nameOfComponent-component> einbinden. mySmallerData muss ein Javascript Objekt in der data Funktion sein.

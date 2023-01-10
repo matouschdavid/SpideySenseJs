@@ -1,0 +1,11 @@
+<link rel="stylesheet" href="/views/cool/cool.css">
+<link rel="stylesheet" type="text/css" href="../../styles.css">
+
+<h1>{{title}}</h1>
+
+<input type="number" id="a">
+<input type="number" id="b">
+
+<button id="addBtn" (click)="add(*a, *b)">Add</button>
+
+<h1>{{result}}</h1>
