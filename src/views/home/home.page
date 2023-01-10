@@ -1,1 +1,10 @@
-<h1>Hello Spideysense</h1>
+<link rel="stylesheet" href="/views/home/home.css">
+<link rel="stylesheet" type="text/css" href="../../styles.css">
+<!-- TODO ADD YOUR MARKUP HERE -->
+<p>My calculator</p>
+
+<input type="number" name="a" id="a" value="{{value1}}">
+<input type="number" name="b" id="b" value="{{value2}}">
+
+<button id="add" (click)="add(*a, *b)">Add</button>
+<button id="sub" (click)="subtract(*a, *b)">Subtract</button>

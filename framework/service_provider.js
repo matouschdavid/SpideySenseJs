@@ -1,16 +1,20 @@
 module.exports = class ServiceProvider {
   static backlog = [];
-  static activeTransientObjects = [];
+  static activeSessionObjects = [];
   static activeScopedObjects = [];
   static activeSingletonObjects = [];
 
-  static addTransient(classToInstantiate, creationFunc) {
+  static setSessionId(sessionId) {
+    this.sessionId = sessionId;
+  }
+
+  static addSessionScoped(classToInstantiate, creationFunc) {
     classToInstantiate = classToInstantiate.toLowerCase();
     this.backlog[classToInstantiate] = {
-      storage: this.activeTransientObjects,
+      storage: this.activeSessionObjects,
       creationFunc: creationFunc,
     };
-    this.activeTransientObjects[classToInstantiate] = undefined;
+    this.needsSession = true;
   }
 
   static addScoped(classToInstantiate, creationFunc) {
@@ -31,17 +35,52 @@ module.exports = class ServiceProvider {
     this.activeSingletonObjects[classToInstantiate] = undefined;
   }
 
+  static addTransient(classToInstantiate, creationFunc) {
+    classToInstantiate = classToInstantiate.toLowerCase();
+    this.backlog[classToInstantiate] = {
+      storage: this.backlog,
+      creationFunc: creationFunc,
+    };
+  }
+
   static createPage(classToInstantiate, params) {
     classToInstantiate = classToInstantiate.toLowerCase();
-    if (this.activeTransientObjects[classToInstantiate] === undefined) {
-      this.activeTransientObjects[classToInstantiate] =
+    if (this.activeScopedObjects[classToInstantiate] === undefined) {
+      this.activeScopedObjects[classToInstantiate] =
         this.backlog[classToInstantiate].creationFunc(params);
     }
-    return this.activeTransientObjects[classToInstantiate];
+    return this.activeScopedObjects[classToInstantiate];
   }
 
   static get(classToInstantiate) {
     classToInstantiate = classToInstantiate.toLowerCase();
+    //SessionScoped
+    if (
+      this.backlog[classToInstantiate].storage === this.activeSessionObjects
+    ) {
+      if (
+        this.backlog[classToInstantiate].storage[this.sessionId] === undefined
+      ) {
+        this.backlog[classToInstantiate].storage[this.sessionId] = [];
+      }
+      if (
+        this.backlog[classToInstantiate].storage[this.sessionId][
+          classToInstantiate
+        ] === undefined
+      ) {
+        this.backlog[classToInstantiate].storage[this.sessionId][
+          classToInstantiate
+        ] = this.backlog[classToInstantiate].creationFunc();
+      }
+      return this.backlog[classToInstantiate].storage[this.sessionId][
+        classToInstantiate
+      ];
+    }
+    //Transient
+    if (this.backlog[classToInstantiate].storage === this.backlog) {
+      return this.backlog[classToInstantiate].creationFunc();
+    }
+    //Singleton and Scoped
     if (
       this.backlog[classToInstantiate].storage[classToInstantiate] === undefined
     ) {
@@ -56,6 +95,6 @@ module.exports = class ServiceProvider {
   }
 
   static clearTransient() {
-    this.activeTransientObjects = [];
+    this.activeSessionObjects = [];
   }
 };

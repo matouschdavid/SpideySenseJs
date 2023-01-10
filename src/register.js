@@ -1,16 +1,12 @@
-const ValueService = require("./services/value_service");
-const Cool = require("./views/cool/cool");
+const CalculatorService = require("./services/calculator_service");
 const Home = require("./views/home/home");
 const ServiceProvider = require("../framework/service_provider");
 
 module.exports = function () {
-  ServiceProvider.addTransient("home", (params) => {
+  ServiceProvider.addScoped("home", (params) => {
     return new Home(params);
   });
-  ServiceProvider.addTransient("cool", (params) => {
-    return new Cool(params);
-  });
-  ServiceProvider.addSingleton("valueService", () => {
-    return new ValueService();
+  ServiceProvider.addSessionScoped("calculatorService", () => {
+    return new CalculatorService();
   });
 };

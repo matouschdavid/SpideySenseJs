@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 var type = args[0].ToLower();
-if (type == "start")
+if (type == "run" || type == "r")
 {
     var strCmdText = "/C node ../framework/index.js";
     System.Diagnostics.Process.Start("CMD.exe", strCmdText);
@@ -8,7 +8,7 @@ if (type == "start")
 }
 var name = args[1].ToLower();
 
-if(type == "component")
+if (type == "component" || type == "c")
 {
     Directory.CreateDirectory($"./views/{name}");
     var fs = File.CreateText($"./views/{name}/{name}.component");
@@ -21,7 +21,7 @@ if(type == "component")
     return;
 }
 
-if(type == "page")
+if (type == "page" || type == "p")
 {
     Directory.CreateDirectory($"./views/{name}");
     var fs = File.CreateText($"./views/{name}/{name}.page");
@@ -48,7 +48,7 @@ if(type == "page")
     Console.WriteLine($"/views/{name}/{name}.js    ...    was created");
 
     var content = File.ReadAllText("./register.js");
-    content = $"const {nameWithUpper} = require(\"./views/{name}/{name}\"); \n{content.Substring(0, content.Length - CharacterCountToEnd(content))} ServiceProvider.register(\"{name}\", (params) => {{return new {nameWithUpper}(params);}});\n}};";
+    content = $"const {nameWithUpper} = require(\"./views/{name}/{name}\"); \n{content.Substring(0, content.Length - CharacterCountToEnd(content))} ServiceProvider.addScoped(\"{name}\", (params) => {{return new {nameWithUpper}(params);}});\n}};";
     File.WriteAllText("./register.js", content);
     Console.WriteLine($"/views/{name}/{name}.js    ...    was registered");
     content = File.ReadAllText("./routing.js");
@@ -58,7 +58,7 @@ if(type == "page")
     return;
 }
 
-if(type == "service")
+if (type == "service" || type == "s")
 {
     Directory.CreateDirectory($"./services/");
     var fs = File.CreateText($"./services/{name}_service.js");
@@ -69,7 +69,7 @@ if(type == "service")
     Console.WriteLine($"/services/{name}_service.js    ...    was created");
 
     var content = File.ReadAllText("./register.js");
-    content = $"const {nameWithUpper}Service = require(\"./services/{name}_service\"); \n{content.Substring(0, content.Length - CharacterCountToEnd(content))} ServiceProvider.register(\"{name}Service\", () => {{return new {nameWithUpper}Service();}});\n}};";
+    content = $"const {nameWithUpper}Service = require(\"./services/{name}_service\"); \n{content.Substring(0, content.Length - CharacterCountToEnd(content))} ServiceProvider.addScoped(\"{name}Service\", () => {{return new {nameWithUpper}Service();}});\n}};";
     File.WriteAllText("./register.js", content);
     Console.WriteLine($"/services/{name}_service.js    ...    was registered");
     return;

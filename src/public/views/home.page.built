@@ -7,163 +7,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{title}}</title>
     <link rel="stylesheet" type="text/css" href="../../styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Poppins:wght@300&display=swap"
-        rel="stylesheet">
 </head>
 
 <body>
-    <link rel="stylesheet" href="./public/stylings/home.css"><a id="top"></a>
-<canvas id="hero-lightpass"></canvas>
-<div id="site">
-    <main>
-        <section id="nav">
-            <nav>
-                <svg width="728" height="613" viewBox="0 0 728 613" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g clip-path="url(#clip0_77_219)">
-                        <rect x="145" y="88" width="44" height="44" rx="22" fill="#007172" class="home_btn"
-                            onclick="scrollToElement('education')" />
-                        <rect x="482" y="281" width="44" height="44" rx="22" fill="#F29325" class="home_btn"
-                            onclick="scrollToElement('projects')" />
-                        <rect x="232" y="569" width="44" height="44" rx="22" fill="#D94F04" class="home_btn"
-                            onclick="scrollToElement('aboutme')" />
-                        <path d="M207 110C244.167 110.833 320.9 128.2 330.5 191C340.1 253.8 427.167 286.5 469.5 295"
-                            stroke="#D2DAE2" stroke-width="8" stroke-dasharray="16 16" />
-                        <path
-                            d="M258 562.247C264.656 525.671 293.851 452.615 357.379 452.99C420.908 453.366 466.868 372.51 481.907 332.036"
-                            stroke="#D2DAE2" stroke-width="8" stroke-dasharray="16 16" />
-                        <text class="home_btn" onclick="scrollToElement('education')" x="170" y="55"
-                            id="first-text">Education</text>
-                        <text class="home_btn" onclick="scrollToElement('projects')" x="508" y="240"
-                            id="second-text">Projects</text>
-                        <text class="home_btn" onclick="scrollToElement('aboutme')" x="0" y="540" id="third-text">About
-                            me</text>
+    <link rel="stylesheet" href="./public/stylings/home.css"><link rel="stylesheet" href="/views/home/home.css">
+<link rel="stylesheet" type="text/css" href="../../styles.css">
+<!-- TODO ADD YOUR MARKUP HERE -->
+<p>My calculator</p>
 
-                    </g>
-                    <defs>
-                        <clipPath id="clip0_77_219">
-                            <rect width="728" height="613" fill="white" />
-                        </clipPath>
-                    </defs>
-                </svg>
+<input type="number" name="a" id="a" value="{{value1}}">
+<input type="number" name="b" id="b" value="{{value2}}">
 
-            </nav>
-            <a id="educationAnchor" href="#top">Back to the top</a>
-        </section>
+  <form id="addForm1" action="/home" method="post">
+                                <input hidden name="onclick" value="add" />
+                                <input hidden name="params" value="*a, *b" />
+                                <input hidden id="*a_add" name="a" value="tbd" />
+<input hidden id="*b_add" name="b" value="tbd" />
 
-        <section id="education">
-            <h2>My education</h2>
-            <div class="home_education-frame">
-                <div class="home_card">
-                    <img src="./assets/leonding.png" alt="Htl Leonding Logo">
-                    <p>Informatics</p>
-                    <h3>2014 - 2019</h3>
-                </div>
-                <div class="home_card">
-                    <img src="./assets/hagenberg.png" alt="Fh Upperaustria Logo">
-                    <p>Software Engineering</p>
-                    <h3>2020 - 2023</h3>
-                </div>
-            </div>
-            <a href="#projectsAnchor" class="home_nextLink">To education</a>
-            <a id="projectsAnchor" href="#educationAnchor">Back to education</a>
-        </section>
-        <section id="projects">
-            <a href="#aboutmeAnchor" class="home_nextLink">To projects</a>
-            <a id="aboutmeAnchor" href="#projectsAnchor">Back to projects</a>
-        </section>
-        <section id="aboutme">
+                                <button id="add" onclick="{
+                document.getElementById('*a_add').value = document.getElementById('a').value;document.getElementById('*b_add').value = document.getElementById('b').value;
+                document.getElementById('addForm1').submit();}">Add</button>
+                            </form>
+  <form id="subtractForm1" action="/home" method="post">
+                                <input hidden name="onclick" value="subtract" />
+                                <input hidden name="params" value="*a, *b" />
+                                <input hidden id="*a_subtract" name="a" value="tbd" />
+<input hidden id="*b_subtract" name="b" value="tbd" />
 
-        </section>
-    </main>
-
-</div>
-<footer>
-
-</footer>
-<script>
-    function scrollToElement(element) {
-        document.getElementById(`${element}Anchor`).scrollIntoView({
-            behavior: 'smooth'
-        });
-    }
-
-    const lines = document.getElementsByClassName('home_line');
-    const heroFrameCount = 70;
-    const threeDotsPause = 30;
-    const threeDotsFrameCount = 68;
-    // const frameCount = heroFrameCount + threeDotsPause + threeDotsFrameCount;
-    const frameCount = heroFrameCount;
-    const html = document.documentElement;
-    const canvas = document.getElementById("hero-lightpass");
-    canvas.width = window.innerWidth;
-    canvas.height = Math.round(innerWidth * 0.38);
-    const context = canvas.getContext("2d");
-    const currentFrame = index => {
-        if (index <= heroFrameCount) {
-            return `./assets/hello_screen/frame_${index.toString().padStart(2, '0')}.jpg`
-        }
-        if (index < (threeDotsPause + heroFrameCount))
-            return undefined;
-
-        return `./assets/three_dots/frame_${(index - (threeDotsPause + heroFrameCount)).toString().padStart(2, '0')}.jpg`
-
-    };
-    const img = new Image();
-    img.src = currentFrame(0);
-
-    img.onload = function () {
-        context.drawImage(img, 0, 0, canvas.width, canvas.height);
-    }
-
-    const updateImage = index => {
-        const res = currentFrame(index);
-        if (!res) {
-            context.fillStyle = "white";
-            context.fillRect(0, 0, canvas.width, canvas.height);
-            return;
-        }
-        img.src = res;
-        context.drawImage(img, 0, 0, canvas.width, canvas.height);
-    }
-
-
-    const preloadImages = () => {
-        for (let i = 0; i < frameCount; i++) {
-            const img = new Image();
-            img.src = currentFrame(i);
-        }
-    };
-
-
-    preloadImages();
-    var lastScrollTop = 0;
-    window.addEventListener('scroll', () => {
-        const scrollTop = html.scrollTop;
-        // const maxScrollTop = window.innerHeight * 3.5;
-        const maxScrollTop = window.innerHeight * 1.65;
-        const scrollFraction = scrollTop / maxScrollTop;
-        const frameIndex = Math.min(
-            frameCount,
-            Math.floor(scrollFraction * frameCount)
-        );
-        requestAnimationFrame(() => updateImage(frameIndex))
-
-        // if (frameIndex >= frameCount) {
-        //     var st = window.pageYOffset || html.scrollTop;
-        //     if (st > lastScrollTop) {
-        //         // downscroll code
-        //         scrollToElement('projects');
-        //     } else {
-        //         // upscroll code
-        //         scrollToElement('education');
-        //     }
-        //     lastScrollTop = st <= 0 ? 0 : st;
-        // }
-    });
-</script>
+                                <button id="sub" onclick="{
+                document.getElementById('*a_subtract').value = document.getElementById('a').value;document.getElementById('*b_subtract').value = document.getElementById('b').value;
+                document.getElementById('subtractForm1').submit();}">Subtract</button>
+                            </form>
 </body>
 
 </html>

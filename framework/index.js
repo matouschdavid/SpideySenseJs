@@ -2,6 +2,7 @@ require("../src/register")();
 const express = require("express");
 const { routes } = require("../src/routing");
 const ServiceProvider = require("./service_provider");
+var session = require("express-session");
 
 const app = express();
 require("./view_engine").initEngine(app);
@@ -18,8 +19,13 @@ app.use(
   })
 );
 
+if (ServiceProvider.needsSession) {
+  // Use the session middleware
+  app.use(session({ secret: "keyboard cat", cookie: {} }));
+}
 app.all(/[^}]+/, (req, res, next) => {
   ServiceProvider.clearScoped();
+  ServiceProvider.setSessionId(req.sessionID);
   next();
 });
 
